@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Example</title>
+</head>
+<body>
+    <h1>WebSocket Example</h1>
+    <form id="bankForm">
+        <label for="bankName">Bank Name:</label>
+        <input type="text" id="bankName" name="bankName" required>
+        <br>
+        <label for="accountNumber">Account Number:</label>
+        <input type="text" id="accountNumber" name="accountNumber" required>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+    <p id="response"></p>
+
+    <script>
+        const ws = new WebSocket("ws://localhost:8080/WebSocket/bank");
+
+        ws.onopen = function() {
+            console.log("WebSocket connection opened");
+        };
+
+        ws.onmessage = function(event) {
+            console.log("Received message: " + event.data);
+            document.getElementById("response").innerText = event.data;
+        };
+
+        ws.onclose = function() {
+            console.log("WebSocket connection closed");
+        };
+
+        ws.onerror = function(error) {
+            console.error("WebSocket error: " + error);
+        };
+
+        document.getElementById("bankForm").onsubmit = function(event) {
+            event.preventDefault();
+            const bankName = document.getElementById("bankName").value;
+            const accountNumber = document.getElementById("accountNumber").value;
+            const message = `${bankName}:${accountNumber}`;
+            console.log("Sending message: " + message);
+            ws.send(message);
+        };
+    </script>
+</body>
+</html>
